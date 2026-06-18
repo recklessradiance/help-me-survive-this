@@ -1,68 +1,937 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* NES (Nintendo Entertainment System) Palette */
+  --nes-grey-light: #cecdcb;   /* Main console light grey */
+  --nes-grey-dark: #4c4c4c;    /* Dark charcoal stripes */
+  --nes-black: #111111;        /* Thick outlines / panel frames */
+  --nes-red: #e60012;          /* Iconic Nintendo Red */
+  --nes-red-dark: #b0000a;     
+  
+  --nes-screen-bg: #1e1e21;    /* Dark retro CRT screen */
+  --nes-screen-text: #f0f0f0;  /* Off-white text */
+  --nes-cyan: #00f0ff;         /* Glowing CRT cyan details */
+  --nes-yellow: #f8b800;       /* Retro yellow details */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-pixel: 'VT323', monospace;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  font-family: var(--font-pixel);
+  background-color: #2c2d30;
+  background-image: linear-gradient(#3a3b3f 1px, transparent 1px), linear-gradient(90deg, #3a3b3f 1px, transparent 1px);
+  background-size: 30px 30px;
+  color: var(--nes-screen-text);
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* NES Console Style Window */
+.terminal-window {
+  width: 900px;
+  max-width: 95vw;
+  height: 660px; /* Fixed height locks console size */
+  background-color: var(--nes-grey-light);
+  border: 5px solid var(--nes-black);
+  box-shadow: 12px 12px 0px var(--nes-black);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom center;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* NES Controller red/black stripe header */
+.title-bar {
+  background: var(--nes-grey-dark);
+  border: 4px solid var(--nes-black);
+  border-bottom: 6px solid var(--nes-red);
+  color: #ffffff;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+.title-bar .controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+/* Controller Select/Start rubber buttons */
+.controls button {
+  width: 24px;
+  height: 8px;
+  background-color: var(--nes-black);
+  border-radius: 4px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  display: inline-block;
+  transform: rotate(-20deg); /* Angled select/start rubber look! */
+  transition: background-color 0.15s;
+  border: none;
+  padding: 0;
+  outline: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.controls .close { background-color: var(--nes-red); }
+.controls .minimize { background-color: #555555; }
+.controls .maximize { background-color: #555555; }
+
+.controls button:hover {
+  background-color: #ffffff;
+}
+
+.controls button:focus {
+  outline: 2px solid var(--nes-cyan);
+}
+
+.title-bar .title {
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 2px 2px 0px var(--nes-black);
+}
+
+.title-languages {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.lang-btn {
+  background-color: var(--nes-black);
+  color: var(--nes-grey-light);
+  border: 2px solid var(--nes-black);
+  border-radius: 4px;
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(255, 255, 255, 0.15);
+  transition: all 0.1s;
+}
+
+.lang-btn:hover:not(:disabled) {
+  color: #fff;
+  background-color: #333;
+}
+
+.lang-btn.pressed {
+  background-color: var(--nes-red);
+  color: #ffffff;
+  border-color: var(--nes-black);
+  box-shadow: inset 2px 2px 0px var(--nes-black);
+  transform: translateY(1px);
+}
+
+/* Uplink Toggle Switch Styling */
+.toggle-switch-container {
+  display: flex;
+  background-color: var(--nes-black);
+  border: 3px solid var(--nes-black);
+  border-radius: 4px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.toggle-btn {
+  flex: 1;
+  background-color: #2a2b2f;
+  color: var(--nes-grey-light);
+  border: none;
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-align: center;
+  outline: none;
+}
+
+.toggle-btn:hover:not(:disabled) {
+  color: #ffffff;
+  background-color: #444;
+}
+
+.toggle-btn.active {
+  background-color: var(--nes-red);
+  color: #ffffff;
+  box-shadow: inset 3px 3px 0px rgba(0, 0, 0, 0.4);
+}
+
+.toggle-btn:focus {
+  outline: 2px solid var(--nes-cyan);
+}
+
+/* The CRT Television Inset */
+.terminal-body {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--nes-screen-bg);
+  border: 5px solid var(--nes-black);
+  border-radius: 6px;
+  box-shadow: inset 5px 5px 0px #000;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .terminal-body {
+    flex-direction: column;
+    height: auto;
   }
-  a:hover {
-    color: #747bff;
+}
+
+/* Config Sidebar (Dark CRT side panel) */
+.config-panel {
+  width: 320px;
+  border-right: 4px solid var(--nes-black);
+  padding: 1.25rem;
+  background-color: #2a2b2f;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .config-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 4px solid var(--nes-black);
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--nes-yellow);
+  letter-spacing: 1px;
+}
+
+select, input, textarea {
+  font-family: var(--font-pixel);
+  background-color: var(--nes-black);
+  border: 2px solid var(--nes-grey-light);
+  color: var(--nes-screen-text);
+  padding: 6px 10px;
+  border-radius: 0;
+  outline: none;
+  font-size: 1.4rem;
+  font-weight: bold;
+  box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+select:focus, input:focus, textarea:focus {
+  border-color: var(--nes-cyan);
+}
+
+/* Inventory List tags */
+.inventory-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.inventory-item {
+  background-color: var(--nes-grey-dark);
+  border: 2px solid var(--nes-black);
+  color: var(--nes-screen-text);
+  padding: 2px 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.inventory-item button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--nes-red);
+  font-weight: bold;
+  font-size: 1.2rem;
+  font-family: inherit;
+}
+
+.inventory-item button:hover {
+  color: #fff;
+}
+
+/* NES controller style round A-Button */
+.action-btn {
+  background-color: var(--nes-red);
+  color: #ffffff;
+  border: 4px solid var(--nes-black);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  font-family: var(--font-pixel);
+  font-size: 1.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 4px 4px 0px var(--nes-black);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-shadow: 2px 2px 0px var(--nes-black);
+  margin-top: 15px;
+}
+
+.action-btn::after {
+  content: "A";
+  position: absolute;
+  bottom: -22px;
+  font-size: 1.1rem;
+  color: var(--nes-grey-light);
+  text-shadow: 1px 1px 0px var(--nes-black);
+}
+
+.action-btn:hover:not(:disabled) {
+  background-color: #ff2a35;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px var(--nes-black);
+}
+
+.action-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px var(--nes-black);
+}
+
+.action-btn:disabled {
+  background-color: #555558;
+  color: #88888b;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* CRT Output display screen */
+.log-display {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--nes-screen-bg);
+}
+
+.log-entry {
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.log-system {
+  color: var(--nes-cyan);
+  font-size: 1.2rem;
+  border-bottom: 2px solid var(--nes-grey-dark);
+  padding-bottom: 4px;
+}
+
+.log-error {
+  color: var(--nes-red);
+  font-size: 1.2rem;
+  border: 3px double var(--nes-red);
+  padding: 8px;
+  background-color: rgba(230, 0, 18, 0.1);
+}
+
+/* Sarcastic guide content */
+.log-guide-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--nes-cyan);
+  border-bottom: 4px double var(--nes-cyan);
+  padding-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.threat-banner {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: var(--nes-red);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  border: 2px solid var(--nes-black);
+}
+
+.step-card {
+  border: 3px solid var(--nes-black);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background-color: var(--nes-grey-dark);
+  color: var(--nes-screen-text);
+  box-shadow: 4px 4px 0px var(--nes-black);
+}
+
+.step-header {
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-bottom: 2px solid var(--nes-screen-text);
+  padding-bottom: 2px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--nes-yellow);
+}
+
+.step-rate {
+  font-size: 1.2rem;
+  background-color: var(--nes-red);
+  color: #ffffff;
+  padding: 0 6px;
+  border: 1px solid var(--nes-black);
+}
+
+.gear-box, .quote-box {
+  border: 3px dashed var(--nes-cyan);
+  padding: 10px;
+  margin-top: 10px;
+  background-color: rgba(0, 240, 255, 0.05);
+}
+
+.gear-box strong, .quote-box strong {
+  display: block;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: var(--nes-cyan);
+}
+
+.quote-box {
+  border-color: var(--nes-yellow);
+  background-color: rgba(248, 184, 0, 0.05);
+}
+
+.quote-box strong {
+  color: var(--nes-yellow);
+}
+
+/* Custom 8-bit Spinner */
+.cursor {
+  align-self: center;
+  margin: 1.5rem 0;
+  width: 32px;
+  height: 32px;
+  border: 4px solid var(--nes-cyan);
+  border-top-color: transparent;
+  animation: spin 0.8s steps(4) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--nes-screen-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--nes-grey-dark);
+  border: 2px solid var(--nes-black);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nes-grey-light);
+}
+
+/* macOS Dock styled as retro NES Controller Deck */
+.mac-dock-container {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.mac-dock {
+  display: flex;
+  align-items: flex-end;
+  background: var(--nes-grey-light);
+  border: 4px solid var(--nes-black);
+  border-radius: 8px;
+  padding: 6px 10px;
+  gap: 12px;
+  box-shadow: 6px 6px 0px var(--nes-black);
+  pointer-events: auto;
+}
+
+.dock-separator {
+  width: 4px;
+  height: 34px;
+  background-color: var(--nes-black);
+  align-self: center;
+  margin: 0 4px;
+}
+
+.dock-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.dock-item {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--nes-black);
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  box-shadow: 3px 3px 0px var(--nes-black);
+  transition: transform 0.1s;
+  position: relative;
+}
+
+.dock-item-wrapper:hover .dock-item {
+  transform: scale(1.15) translateY(-5px);
+  box-shadow: 4px 4px 0px var(--nes-black);
+}
+
+.dock-tooltip {
+  position: absolute;
+  top: -38px;
+  background: var(--nes-black);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  font-family: var(--font-pixel);
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+}
+
+.dock-item-wrapper:hover .dock-tooltip {
+  opacity: 1;
+}
+
+.dock-indicator {
+  width: 6px;
+  height: 6px;
+  background-color: var(--nes-red);
+  border: 1px solid var(--nes-black);
+  border-radius: 50%;
+  margin-top: 4px;
+  opacity: 0.2;
+}
+
+.dock-item-wrapper:not(.minimized) .dock-indicator {
+  opacity: 1;
+}
+
+/* Bouncing animation when minimized */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.dock-item-wrapper.minimized .dock-item {
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+.dock-item-wrapper.minimized .dock-indicator {
+  background-color: var(--nes-yellow);
+  opacity: 1;
+}
+
+/* Minimize overrides */
+.terminal-window.minimized {
+  opacity: 0;
+  transform: scale(0.1) translateY(600px);
+  pointer-events: none;
+}
+
+.api-quest-link {
+  font-size: 0.95rem;
+  color: var(--nes-yellow);
+  margin-top: 6px;
+  line-height: 1.4;
+  font-family: var(--font-pixel);
+}
+
+.retro-link {
+  color: var(--nes-cyan);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.retro-link:hover {
+  color: #ffffff;
+}
+
+/* Login Session Styles */
+.user-profile-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--nes-grey-dark);
+  border: 2px solid var(--nes-black);
+  padding: 6px 10px;
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+}
+
+.profile-icon {
+  font-size: 1.2rem;
+}
+
+.profile-email {
+  color: var(--nes-screen-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.logout-btn {
+  background-color: var(--nes-red);
+  color: #fff;
+  border: 2px solid var(--nes-black);
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--nes-black);
+}
+
+.logout-btn:hover {
+  background-color: #ff2a35;
+}
+
+.logout-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0px var(--nes-black);
+}
+
+.login-trigger-btn {
+  background-color: var(--nes-cyan);
+  color: var(--nes-black);
+  border: 3px solid var(--nes-black);
+  padding: 8px 12px;
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--nes-black);
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.login-trigger-btn:hover {
+  background-color: #ffffff;
+}
+
+.login-trigger-btn:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px var(--nes-black);
+}
+
+/* Modal Overlay & Card styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.retro-modal {
+  background-color: var(--nes-grey-light);
+  border: 4px solid var(--nes-black);
+  width: 480px;
+  max-width: 90vw;
+  box-shadow: 8px 8px 0px var(--nes-black);
+  font-family: var(--font-pixel);
+}
+
+.modal-header {
+  background-color: var(--nes-black);
+  color: #fff;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  color: var(--nes-red);
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal-btn:hover {
+  color: #fff;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-instruction {
+  font-size: 1rem;
+  color: var(--nes-black);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.oauth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.oauth-btn {
+  border: 3px solid var(--nes-black);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--nes-black);
+  color: #fff;
+}
+
+.oauth-btn:hover {
+  filter: brightness(1.1);
+}
+
+.oauth-btn:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px var(--nes-black);
+}
+
+.google-btn {
+  background-color: #db4437;
+}
+
+.github-btn {
+  background-color: #24292e;
+}
+
+.openai-btn {
+  background-color: #10a37f;
+}
+
+.modal-separator {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 5px 0;
+  position: relative;
+}
+
+.email-login-form {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-input {
+  flex: 1;
+  background-color: #fff;
+  border: 3px solid var(--nes-black);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--nes-black);
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: var(--nes-cyan);
+}
+
+.modal-submit-btn {
+  background-color: var(--nes-yellow);
+  color: var(--nes-black);
+  border: 3px solid var(--nes-black);
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--nes-black);
+}
+
+.modal-submit-btn:hover {
+  background-color: #fff;
+}
+
+.modal-submit-btn:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px var(--nes-black);
+}
+
+/* Comprehensive Responsive Device Optimization Rules */
+@media (max-width: 768px) {
+  /* Set terminal window to be full screen or fit-content vertically */
+  .terminal-window {
+    height: auto !important;
+    min-height: calc(100vh - 40px);
+    width: 98vw !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+    box-shadow: 6px 6px 0px var(--nes-black) !important;
+  }
+
+  /* Make header and controls compact */
+  .title-bar {
+    padding: 8px !important;
+    height: auto !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .title-bar .title {
+    font-size: 1.2rem !important;
+    letter-spacing: 1px !important;
+    text-shadow: 1px 1px 0px var(--nes-black) !important;
+  }
+
+  .title-languages {
+    margin-left: 0 !important;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .lang-btn {
+    font-size: 0.8rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Stack inputs side panel above log panel */
+  .terminal-body {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .config-panel {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 4px solid var(--nes-black) !important;
+    padding: 1rem !important;
+    overflow-y: visible !important;
+  }
+
+  .log-display {
+    padding: 1rem !important;
+    overflow-y: visible !important;
+  }
+
+  /* Ensure inputs and labels look readable and fit small viewports */
+  select, input, textarea {
+    font-size: 1.1rem !important;
+    padding: 6px 8px !important;
+  }
+
+  label {
+    font-size: 1rem !important;
+  }
+
+  /* Dynamic gear-box and steps */
+  .step-card {
+    padding: 8px !important;
+  }
+
+  .step-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  /* Dock adjustment for touch devices */
+  .mac-dock-container {
+    bottom: 5px !important;
+  }
+
+  .mac-dock {
+    padding: 4px 8px !important;
+    gap: 8px !important;
+  }
+
+  .dock-item {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.25rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-bar {
+    justify-content: space-between;
+  }
+
+  .title-bar .title {
+    font-size: 1rem !important;
+  }
+
+  .title-languages {
+    margin-top: 4px;
+  }
+  
+  .action-btn {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.3rem !important;
   }
 }
