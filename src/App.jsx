@@ -526,4 +526,4 @@ function App() {
 
 export default App;
 
-// OS window layout and dock controls active
+// OAuth login dialog structures active
