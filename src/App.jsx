@@ -109,11 +109,39 @@ function App() {
   };
 
   const getStatusLines = (mode) => {
-    return [
-      "Calculating telemetry data...",
-      "Analyzing inventory items...",
-      "Generating guide output..."
-    ];
+    const lines = {
+      English: [
+        "Summoning doomsday algorithms for active scenario...",
+        "Confirming ground zero location coordinates...",
+        "Weaponizing trash payload inventory...",
+        "Sending distress signal to central silicon core... waiting for response...",
+        "Connection timeout, retrying link...",
+        "Locking NES CPU speed to full throttle...",
+        "Decoding advice stream from artificial overlords...",
+        "Survival probability is absolute zero. Prepare yourself:"
+      ],
+      Tenglish: [
+        "Poye kaalam vacchindi ra nanna active scenario ki...",
+        "Ee area lone poyi chachipothava coordinates confirm chestunna...",
+        "Nee chetta sanchi lo unna payload weaponize chestunna...",
+        "Kruthrima Devullaki request sending... response kosam waiting...",
+        "Inka evadiki contact avvatledu, wait...",
+        "NES CPU speed full throttle lock chestunna...",
+        "Kruthrima Devullu rasina advice decode chestunna...",
+        "Asalu chances ee levu. Inka chusi chavu:"
+      ],
+      Hinglish: [
+        "Yamraj bula rahe hain active scenario ke liye...",
+        "Isi area mein khel khatam hoga coordinates confirm kar rahe hain...",
+        "Aapke kachre ke jhole ka payload weaponize kar rahe hain...",
+        "Kruthrima Devtas ko request bhej rahe hain... response ka wait hai...",
+        "Abhi tak kisi se contact nahi ho raha, wait...",
+        "NES CPU speed full throttle lock kar rahe hain...",
+        "Kruthrima Devtas ka likha hua gyaan decode kar rahe hain...",
+        "Bachne ke koi chance nahi hain. Ab dekho aur maro:"
+      ]
+    };
+    return lines[mode] || lines.English;
   };
 
   const buildClientMockGuide = (scenario, location, inventory, mode) => {
@@ -526,4 +554,4 @@ function App() {
 
 export default App;
 
-// OAuth login dialog structures active
+// Typewriter log statuses active
