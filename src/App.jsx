@@ -273,7 +273,7 @@ function App() {
       updateStatus(`Directing payload telemetry to central core processor (Spring Boot @ port 8080)...`, "system");
 
       try {
-        throw new Error("offline");
+        const response = await fetch("http://localhost:8080/api/survival/generate", {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
@@ -553,5 +553,3 @@ function App() {
 }
 
 export default App;
-
-// Typewriter log statuses active
