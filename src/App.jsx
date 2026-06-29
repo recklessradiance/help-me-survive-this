@@ -270,10 +270,14 @@ function App() {
     try {
       let data;
       const providerHeader = uplinkMode === "local" ? "local" : "cloud";
-      updateStatus(`Directing payload telemetry to central core processor (Spring Boot @ port 8080)...`, "system");
+      updateStatus("Directing payload telemetry to central core processor...", "system");
+
+      const apiEndpoint = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:8080/api/survival/generate"
+        : "https://ampbreaker.onrender.com/api/survival/generate";
 
       try {
-        const response = await fetch("http://localhost:8080/api/survival/generate", {
+        const response = await fetch(apiEndpoint, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
