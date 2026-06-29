@@ -150,12 +150,12 @@ function App() {
         steps: [
           {
             title: "Panic and Accept Fate",
-            description: `Your current disaster "${scenario}" is absolute. The network links are dead, the satellites are fried, and frankly, no one can help you.`,
+            description: `Your current disaster "${scenario}" is absolute. Frankly, no one can help you since the network links are dead.`,
             survivalRateMultiplier: 0.00
           },
           {
             title: "Assess Your Trash",
-            description: `You are stuck at "${location}" with: [${gearList}]. Think about how this junk is going to save you. Hint: it won't.`,
+            description: `You are stuck at "${location}" with: [${gearList}]. Think about how this junk is not going to save you.`,
             survivalRateMultiplier: 0.05
           },
           {
@@ -170,7 +170,7 @@ function App() {
           },
           {
             title: "Prepare for Impact",
-            description: "Find a comfortable spot, sit down, and wait for the inevitable doom.",
+            description: "Find a comfortable spot. Sit down and wait for the inevitable doom.",
             survivalRateMultiplier: 1.00
           }
         ],
@@ -183,12 +183,12 @@ function App() {
         steps: [
           {
             title: "Kangaaru Padi Sachipo",
-            description: `Nee badhalu chusi navvukodaaniki AI devullu kuda offline poyaru. Satellites anni fasak. Inka evadu ninnu kapadaledu.`,
+            description: `Nee badhalu chusi navvukodaaniki AI devullu kuda offline poyaru. Satellites anni fasak ayyayi.`,
             survivalRateMultiplier: 0.00
           },
           {
             title: "Cheddi Chetta Vethuko",
-            description: `Nuvvu "${location}" daggara stuck ayyav, adi kuda nee sanchi lo unna [${gearList}] tho. Ee chetta tho em chesthav ra nanna? Emi cheyalev.`,
+            description: `Nuvvu "${location}" daggara stuck ayyav nee sanchi lo unna [${gearList}] tho. Ee chetta tho em chesthav ra nanna?`,
             survivalRateMultiplier: 0.05
           },
           {
@@ -216,12 +216,12 @@ function App() {
         steps: [
           {
             title: "Ghabrao aur Haar Mano",
-            description: `Sare AI devta offline chale gaye hain. Satellites ka dabba gul ho gaya hai. Ab koi tumhari madad nahi kar sakta.`,
+            description: `Sare AI devta offline chale gaye hain. Satellites ka dabba gul hone se ab koi madad nahi karega.`,
             survivalRateMultiplier: 0.00
           },
           {
             title: "Apna Kachra Dekho",
-            description: `Tum "${location}" par stuck ho aur tumhare jhole mein [${gearList}] hai. Is kachre se kya hi hoga? Kuch nahi.`,
+            description: `Tum "${location}" par stuck ho aur tumhare jhole mein [${gearList}] hai. Is kachre se kya hi hoga?`,
             survivalRateMultiplier: 0.05
           },
           {
@@ -231,12 +231,12 @@ function App() {
           },
           {
             title: "Bhagwan ko Yaad Karo",
-            description: "Bhagwan ke darbaar mein arzi lagao aur shanti se baithe raho.",
+            description: "Bhagwan ke darbaar mein arzi lagao. Bas shanti se baithe raho.",
             survivalRateMultiplier: 0.25
           },
           {
             title: "Aakhri Dua Mango",
-            description: "Shanti se baitho aur aaram se apna khel khatam hone ka wait karo.",
+            description: "Shanti se baitho. Apne khel khatam hone ka aaram se wait karo.",
             survivalRateMultiplier: 1.00
           }
         ],
@@ -244,7 +244,7 @@ function App() {
         humorousQuote: "Uplink gayab. Gyaan khatam. Ab dekho aur maro!"
       }
     };
-
+ 
     return guidesByLanguage[mode] || guidesByLanguage.English;
   };
 
