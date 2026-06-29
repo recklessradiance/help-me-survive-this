@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 
 function App() {
   const [languageMode, setLanguageMode] = useState("English");
-  const [scenario, setScenario] = useState("Zombie Apocalypse");
-  const [location, setLocation] = useState("Home Office");
-  const [inventory, setInventory] = useState(["Half-eaten sandwich", "Lint", "USB Cable"]);
+  const [scenario, setScenario] = useState("");
+  const [location, setLocation] = useState("");
+  const [inventory, setInventory] = useState([]);
   const [itemInput, setItemInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [systemStatus, setSystemStatus] = useState("");
@@ -12,11 +12,6 @@ function App() {
   const [displayedStatus, setDisplayedStatus] = useState("");
   const [guide, setGuide] = useState(null);
 
-  const [uplinkMode, setUplinkMode] = useState(() => localStorage.getItem("survival_uplink_mode") || "cloud");
-
-  useEffect(() => {
-    localStorage.setItem("survival_uplink_mode", uplinkMode);
-  }, [uplinkMode]);
   useEffect(() => {
     setGuide(null);
     setSystemStatus("");
@@ -44,6 +39,7 @@ function App() {
       // Small timeout to allow element to render fully in DOM before focus
       setTimeout(() => {
         guideRef.current.focus();
+        guideRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
     }
   }, [guide]);
@@ -269,7 +265,7 @@ function App() {
     
     try {
       let data;
-      const providerHeader = uplinkMode === "local" ? "local" : "cloud";
+      const providerHeader = "cloud";
       updateStatus("Directing payload telemetry to central core processor...", "system");
 
       const apiEndpoint = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
@@ -372,31 +368,7 @@ function App() {
       <div className="terminal-body">
         {/* Input parameters panel */}
         <div className="config-panel">
-          <div className="form-group">
-            <label>Uplink Mode</label>
-            <div className="toggle-switch-container" role="group" aria-label="Satellite Uplink Mode">
-              <button 
-                type="button"
-                className={`toggle-btn ${uplinkMode === 'cloud' ? 'active' : ''}`}
-                onClick={() => setUplinkMode('cloud')}
-                disabled={loading}
-                aria-pressed={uplinkMode === 'cloud'}
-                aria-label="Use Cloud Satellite Uplink"
-              >
-                CLOUD
-              </button>
-              <button 
-                type="button"
-                className={`toggle-btn ${uplinkMode === 'local' ? 'active' : ''}`}
-                onClick={() => setUplinkMode('local')}
-                disabled={loading}
-                aria-pressed={uplinkMode === 'local'}
-                aria-label="Use Local Engine"
-              >
-                LOCAL
-              </button>
-            </div>
-          </div>
+
 
           <div className="form-group">
             <label htmlFor="scenario-input">what do you need help with?</label>
@@ -423,7 +395,7 @@ function App() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="item-input">what do you have with you</label>
+            <label htmlFor="item-input">what do you have with you?</label>
             <form onSubmit={handleAddItem} style={{ display: 'flex', gap: '5px' }}>
               <input 
                 id="item-input"

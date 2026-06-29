@@ -847,9 +847,8 @@ select:focus, input:focus, textarea:focus {
   }
 
   .title-languages {
-    margin-left: 0 !important;
-    width: 100%;
-    justify-content: flex-start;
+    margin-left: auto !important;
+    justify-content: flex-end;
     gap: 6px;
   }
 
